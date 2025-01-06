@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Literal
 
-from pydantic import ValidationError
+from pydantic import AnyHttpUrl, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -87,13 +87,23 @@ class WebConfig(EnvironmentSetting):
 
     ALLOWED_ORIGINS: str
     PREFIX_API: str
-    LOG_LEVEL: Literal[
+    STREAM_LOG_LEVEL: Literal[
+        "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"
+    ]
+    FORMATTER_STREAM_LOG: str
+    HOST_LOGS: str
+    HTTP_LOG_LEVEL: Literal[
         "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"
     ]
 
     def allowed_origins(self) -> list[str]:
         """Return allowed origins."""
         return self.ALLOWED_ORIGINS.split(",")
+
+    @property
+    def host_logs(self) -> str:
+        """Return host logs."""
+        return self.HOST_LOGS
 
 
 class Settings:
