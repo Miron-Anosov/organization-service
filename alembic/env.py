@@ -11,7 +11,14 @@ from sqlalchemy.sql.schema import SchemaItem
 
 from alembic import context
 from src.core.configs.env import settings
+from src.core.infrastructure.database.schemas.activity import (
+    Activity,
+    OrganizationActivity,
+)
 from src.core.infrastructure.database.schemas.base import BaseModel
+from src.core.infrastructure.database.schemas.buildings import Building
+from src.core.infrastructure.database.schemas.organizations import Organization
+from src.core.infrastructure.database.schemas.phones import PhoneNumber
 
 config = context.config
 
@@ -24,7 +31,7 @@ config.set_main_option("sqlalchemy.url", settings.db.get_url_database)
 
 
 def include_object(
-    object: SchemaItem,
+    object: SchemaItem,  # noqa
     name: Optional[str],
     type_: Literal[
         "schema",
@@ -38,15 +45,14 @@ def include_object(
     compare_to: Optional[SchemaItem],
 ) -> bool:  # noqa : E501
     """Определяет, нужно ли включать объект в миграцию."""
-    if type_ != "table":
+    if type_ == "table" and name not in (
+        Organization.__tablename__,
+        Building.__tablename__,
+        Activity.__tablename__,
+        OrganizationActivity.__tablename__,
+        PhoneNumber.__tablename__,
+    ):
         return False
-
-    if name == "spatial_ref_sys":
-        return False
-
-    if not hasattr(object, "schema") or object.schema != "public":
-        return False
-
     return True
 
 
