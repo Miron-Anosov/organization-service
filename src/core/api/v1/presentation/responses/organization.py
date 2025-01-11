@@ -37,7 +37,7 @@ class OrganizationResponse(BaseModel):
 
     model_config = pydantic.ConfigDict(
         from_attributes=True,
-        title="Organization Model",
+        title="Organization Response",
         json_schema_extra={
             "example": {
                 "id": 1,
@@ -57,5 +57,46 @@ class OrganizationResponse(BaseModel):
                     {"name": "Легковые"},
                 ],
             }
+        },
+    )
+
+
+class CollectionOrganizationResponse(BaseModel):
+    """Collection organization response."""
+
+    organizations: List[OrganizationResponse]
+
+    model_config = pydantic.ConfigDict(
+        from_attributes=True,
+        title="Organizations Response",
+        json_schema_extra={
+            "example": [
+                {
+                    "id": 1,
+                    "name": "«Мон’Дэлис Русь» Общество с ограниченной ответственностью",  # noqa E501
+                    "building": {
+                        "id": 11,
+                        "address": "Нижний Новгород, Хорошевская, д. 74",
+                        "location": [37.205475, 3.463513],
+                    },
+                    "phones": [
+                        {"phone": "+7 (453) 901-05-32"},
+                        {"phone": "+7 (737) 328-54-24"},
+                        {"phone": "+7 (489) 318-09-95"},
+                    ],
+                    "activity": [{"name": "Легковые"}, {"name": "Запчасти"}],
+                },
+                {
+                    "id": 6,
+                    "name": "Трата-та 25",
+                    "building": {
+                        "id": 11,
+                        "address": "Нижний Новгород, Хорошевская, д. 74",
+                        "location": [37.205475, 3.463513],
+                    },
+                    "phones": [],
+                    "activity": [],
+                },
+            ]
         },
     )
