@@ -82,18 +82,24 @@ class DataBaseClientEnvConf(EnvironmentSetting):
         )
 
 
+LogType = Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"]
+
+
 class WebConfig(EnvironmentSetting):
     """Conf CORS from environment."""
 
     ALLOWED_ORIGINS: str
     PREFIX_API: str
-    STREAM_LOG_LEVEL: Literal[
-        "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"
-    ]
+    STREAM_LOG_LEVEL: LogType
     FORMATTER_STREAM_LOG: str
     HOST_LOGS: str
-    HTTP_LOG_LEVEL: Literal[
-        "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"
+    HTTP_LOG_LEVEL: LogType
+
+    LOG_OUT_COMMON: Literal[
+        "json",
+        "http",
+        "all",
+        "minimal",
     ]
 
     def allowed_origins(self) -> list[str]:

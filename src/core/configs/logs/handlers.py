@@ -7,7 +7,9 @@ import logging
 from logging.handlers import HTTPHandler
 from typing import Dict
 
-logger = logging.getLogger("root")
+from src.core.configs.env import settings
+
+LOGGER = logging.getLogger(settings.webconf.LOG_OUT_COMMON)
 
 
 class HTTPHandlerCustom(HTTPHandler):
@@ -73,12 +75,12 @@ class HTTPHandlerCustom(HTTPHandler):
 
             connection.close()
         except ConnectionRefusedError as connection_error:
-            logging.error(
+            LOGGER.error(
                 "HTTPHandler connection refused: %s", str(connection_error)
             )
             self.handleError(record)
         except TimeoutError as timeout_error:
-            logger.error("HTTPHandler timeout: %s", str(timeout_error))
+            LOGGER.error("HTTPHandler timeout: %s", str(timeout_error))
             self.handleError(record)
         except Exception as exception:
-            logging.error("HTTPHandler exception: %s", str(exception))
+            LOGGER.error("HTTPHandler exception: %s", str(exception))

@@ -25,9 +25,9 @@ log_config = {
             "formatter": "json",
             "filters": ["info_filter"],
         },
-        "stream_base": {
+        "stream_base_stderr": {
             "class": "logging.StreamHandler",
-            "level": "ERROR",
+            "level": "DEBUG",
             "stream": sys.stderr,
             "formatter": "base",
         },
@@ -47,25 +47,25 @@ log_config = {
         }
     },
     "loggers": {
-        "app": {
-            "level": "INFO",
-            "handlers": ["http_handler", "stream_json", "stream_base"],
+        "json": {
+            "level": "DEBUG",
+            "handlers": ["stream_json"],
             "propagate": False,
         },
-        "utils": {
+        "http": {
             "level": "INFO",
             "propagate": False,
-            "handlers": ["http_handler", "stream_json", "stream_base"],
+            "handlers": ["http_handler"],
         },
-        "api": {
+        "all": {
             "level": "INFO",
             "propagate": False,
-            "handlers": ["http_handler", "stream_json", "stream_base"],
+            "handlers": ["http_handler", "stream_json", "stream_base_stderr"],
         },
-        "root": {
+        "minimal": {
             "level": settings.webconf.STREAM_LOG_LEVEL,
-            "handlers": ["stream_json", "stream_base"],
-            "propagate": True,
+            "propagate": False,
+            "handlers": ["stream_base_stderr"],
         },
     },
 }
