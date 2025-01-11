@@ -1,24 +1,26 @@
 """Create connect to database session."""
 
 import logging
-from logging import Logger
 from typing import Any
+
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
 from src.core.configs.env import settings
 from src.core.infrastructure.database.core.engine import (
     ClientDatabase,
     get_engine,
 )
-from src.core.infrastructure.database.cruds.crud import Crud
+from src.core.infrastructure.database.cruds.facade import Crud
 
-LOGGER: Logger = logging.getLogger("utils")
+LOGGER = logging.getLogger(settings.webconf.LOG_OUT_COMMON)
 
 
-class Connector:
+class Connector(Crud):
     """Database mq and _session management using context manager."""
 
-    @staticmethod
+    @classmethod
     async def init_engine(
+        cls,
         url: str = settings.db.get_url_database,
         echo: bool = settings.db.ECHO,
     ) -> ClientDatabase:
@@ -42,7 +44,7 @@ class Connector:
         await connect.async_engine.dispose()
         LOGGER.debug("Disconnected database")
 
-    async def __aenter__(self) -> "Connector":
+    async def __aenter__(self) -> "AsyncSession":
         """Initialize the engine and connect to the database."""
         engine = await get_engine(
             url=settings.db.get_url_database, echo=settings.db.ECHO
@@ -50,7 +52,7 @@ class Connector:
         async with engine.get_scoped_session() as __session:
             self.session = __session
             LOGGER.debug("Connected database")
-            return self
+            return self.session
 
     async def __aexit__(
         self, exc_type: Any, exc_val: Any, exc_tb: Any
@@ -60,19 +62,3 @@ class Connector:
             await self.session.close()
             self.session = None
             LOGGER.debug("Disconnected database")
-
-
-class ClientDB(Connector):
-    """Client database."""
-
-    def __init__(self, crud: Crud) -> None:
-        """Initialize the client database."""
-        self.crud = crud
-
-
-def db_client(crud: Crud) -> "Connector":
-    """Create a Database worker.
-
-    :return: Connector worker.
-    """
-    return ClientDB(crud=crud)
