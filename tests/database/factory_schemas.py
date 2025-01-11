@@ -40,7 +40,7 @@ class OrganizationFakeFactory(factory.Factory):
     name = factory.LazyAttribute(
         lambda _: f"{business.company()} {business.company_type()}"
     )
-    building = factory.SubFactory(BuildingsFakeFactory)
+    building_id = factory.SubFactory(BuildingsFakeFactory)
 
 
 class PhoneNumberFakeFactory(factory.Factory):
