@@ -9,15 +9,16 @@ package-mode = false
 [tool.poetry.dependencies]
 python = "^3.12"
 pydantic-settings = "^2.4.0"
-pydantic = {extras = ["email"], version = "^2.8.2"}
+pydantic = { extras = ["email"], version = "^2.8.2" }
 fastapi = "^0.115.6"
 python-multipart = "^0.0.20"
-sqlalchemy = {extras = ["mypy"], version = "^2.0.36"}
+sqlalchemy = { extras = ["mypy"], version = "^2.0.36" }
 alembic = "^1.14.0"
-geoalchemy2 = {extras = ["shapely"], version = "^0.17.0"}
+geoalchemy2 = { extras = ["shapely"], version = "^0.17.0" }
 asyncpg = "^0.30.0"
 uvicorn = "^0.34.0"
 greenlet = "^3.1.1"
+mypy = "^1.14.1"
 
 
 
@@ -34,7 +35,7 @@ pytest-cov = "^6.0.0"
 pytest-asyncio = "^0.25.1"
 types-factory-boy = "^0.4.1"
 faker = "^33.3.0"
-mimesis = {extras = ["factory"], version = "^18.0.0"}
+mimesis = { extras = ["factory"], version = "^18.0.0" }
 coverage = "^7.6.10"
 types-shapely = "^2.0.0.20241221"
 
@@ -51,16 +52,15 @@ warn_required_dynamic_aliases = true
 [tool.mypy]
 plugins = ['pydantic.mypy', "sqlalchemy.ext.mypy.plugin"]
 python_version = 3.12
-module_paths = ["src"]
+#module_paths = ["src"]
 warn_unused_ignores = true
 warn_redundant_casts = true
 disallow_any_generics = true
-no_implicit_reexport = true
+no_implicit_reexport = false
 disallow_untyped_defs = true
 ignore_missing_imports = false
 platform = "linux"
-mypy_path = ["src"]
-packages = ["src"]
+#mypy_path = ["src"]
 exclude = '''
    (?x)
    ^\.venv/ |
