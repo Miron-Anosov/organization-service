@@ -29,10 +29,10 @@ def resp_org_full_data(
             address=organization.building.address,
             location=Location(
                 latitude=extract_coordinates(organization.building.location)[
-                    0
+                    1
                 ],
                 longitude=extract_coordinates(organization.building.location)[
-                    1
+                    0
                 ],
             ),
         ),

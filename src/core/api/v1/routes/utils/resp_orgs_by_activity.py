@@ -29,8 +29,8 @@ def resp_org_by_activity_data(
                 id=org.building.id,
                 address=org.building.address,
                 location=Location(
-                    latitude=extract_coordinates(org.building.location)[0],
-                    longitude=extract_coordinates(org.building.location)[1],
+                    latitude=extract_coordinates(org.building.location)[1],
+                    longitude=extract_coordinates(org.building.location)[0],
                 ),
             ),
             phones=[

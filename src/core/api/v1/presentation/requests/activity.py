@@ -12,7 +12,7 @@ class ActivityRequest:
 
     def __init__(
         self,
-        activity: Annotated[
+        name: Annotated[
             ACTIVITIES,
             Path(
                 ...,
@@ -21,5 +21,9 @@ class ActivityRequest:
             ),
         ],
     ) -> None:
-        """Initialize ActivityRootRequest class."""
-        self.activity = activity
+        """Initialize ActivityRootRequest class.
+
+        :param name: The name of the activity.
+        :type name: ACTIVITIES
+        """
+        self.name = name

@@ -53,8 +53,8 @@ class OrganizationResponse(BaseModel):
                     "id": 6,
                     "address": "Дудинка, Черкасский М., д. 39",
                     "location": {
-                        "longitude": 58.067381,
-                        "latitude": 113.130354,
+                        "longitude": -150.676573,
+                        "latitude": -9.263891,
                     },
                 },
                 "phones": [
@@ -89,35 +89,13 @@ class CollectionOrganizationResponse(BaseModel):
                         "id": 1,
                         "address": "Дудинка, Черкасский М., д. 39",
                         "location": {
-                            "longitude": -9.263891,
-                            "latitude": -150.676573,
+                            "longitude": -150.676573,
+                            "latitude": -9.263891,
                         },
                     },
                     "phones": [{"phone": "+7 (716) 065-56-96"}],
                     "activity": [{"name": "Грузовые"}],
                 },
-                {
-                    "id": 27,
-                    "name": "«Водоканал Санкт-Петербурга» Публичное акционерное общество",  # noqa E501
-                    "building": {
-                        "id": 1,
-                        "address": "Дудинка, Черкасский М., д. 39",
-                        "location": {
-                            "longitude": -9.263891,
-                            "latitude": -150.676573,
-                        },
-                    },
-                    "phones": [
-                        {"phone": "+7 (913) 229-53-87"},
-                        {"phone": "+7 (546) 681-68-78"},
-                        {"phone": "+7 (336) 392-43-24"},
-                    ],
-                    "activity": [
-                        {"name": "Колбасы"},
-                        {"name": "Экспресс"},
-                        {"name": "Фуры"},
-                    ],
-                },  # noqa E501
                 {
                     "id": 29,
                     "name": "Евросиб Акционерное общество",
@@ -125,8 +103,8 @@ class CollectionOrganizationResponse(BaseModel):
                         "id": 1,
                         "address": "Дудинка, Черкасский М., д. 39",
                         "location": {
-                            "longitude": -9.263891,
-                            "latitude": -150.676573,
+                            "longitude": -150.676573,
+                            "latitude": -9.263891,
                         },
                     },
                     "phones": [
@@ -134,37 +112,6 @@ class CollectionOrganizationResponse(BaseModel):
                         {"phone": "+7 (322) 482-65-45"},
                         {"phone": "+7 (531) 441-12-73"},
                     ],
-                    "activity": [{"name": "Еда"}],
-                },
-                {
-                    "id": 32,
-                    "name": "«Тактическое ракетное вооружение» Акционерное общество",  # noqa E501
-                    "building": {
-                        "id": 1,
-                        "address": "Дудинка, Черкасский М., д. 39",
-                        "location": {
-                            "longitude": -9.263891,
-                            "latitude": -150.676573,
-                        },
-                    },
-                    "phones": [
-                        {"phone": "+7 (839) 123-64-04"},
-                        {"phone": "+7 (841) 136-25-68"},
-                    ],
-                    "activity": [{"name": "Конфеты"}],
-                },
-                {
-                    "id": 37,
-                    "name": "Акционерный банк «Россия» Публичное акционерное общество",  # noqa E501
-                    "building": {
-                        "id": 1,
-                        "address": "Дудинка, Черкасский М., д. 39",
-                        "location": {
-                            "longitude": -9.263891,
-                            "latitude": -150.676573,
-                        },
-                    },
-                    "phones": [{"phone": "+7 (876) 592-35-45"}],
                     "activity": [{"name": "Еда"}],
                 },
             ]

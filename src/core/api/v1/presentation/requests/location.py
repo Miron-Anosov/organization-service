@@ -179,6 +179,7 @@ class LocationRectangleRequest:
             or self.lat_min is None
         ):
             return None
+
         return LocationRectangleDTO(
             lon_min=self.lon_min,
             lon_max=self.lon_max,
