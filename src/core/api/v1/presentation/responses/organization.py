@@ -6,6 +6,13 @@ import pydantic
 from pydantic import BaseModel, Field
 
 
+class Location(BaseModel):
+    """Location model."""
+
+    longitude: float = Field(..., alias="longitude")
+    latitude: float = Field(..., alias="latitude")
+
+
 class ActivityResponse(BaseModel):
     """Activity response model."""
 
@@ -23,7 +30,7 @@ class BuildingResponse(BaseModel):
 
     id: int = Field(..., alias="id")
     address: str = Field(..., alias="address")
-    location: tuple[float, float] = Field(..., alias="location")
+    location: Location
 
 
 class OrganizationResponse(BaseModel):
@@ -41,20 +48,24 @@ class OrganizationResponse(BaseModel):
         json_schema_extra={
             "example": {
                 "id": 1,
-                "name": "Verysell Акционерное общество",
+                "name": "«Швабе» Общество с ограниченной ответственностью",
                 "building": {
-                    "id": 11,
-                    "address": "Задонск, Братцевская, д. 95",
-                    "location": [-52.105232, -9.719463],
+                    "id": 6,
+                    "address": "Дудинка, Черкасский М., д. 39",
+                    "location": {
+                        "longitude": 58.067381,
+                        "latitude": 113.130354,
+                    },
                 },
                 "phones": [
-                    {"phone": "+7 (183) 468-16-28"},
-                    {"phone": "+7 (348) 245-24-87"},
+                    {"phone": "+7 (561) 115-61-70"},
+                    {"phone": "+7 (463) 315-91-93"},
+                    {"phone": "+7 (593) 611-16-72"},
                 ],
                 "activity": [
-                    {"name": "Еда"},
-                    {"name": "Кондитерские изделия"},
-                    {"name": "Легковые"},
+                    {"name": "Внедорожники"},
+                    {"name": "Почтовая"},
+                    {"name": "Срочный"},
                 ],
             }
         },
@@ -72,30 +83,89 @@ class CollectionOrganizationResponse(BaseModel):
         json_schema_extra={
             "example": [
                 {
-                    "id": 1,
-                    "name": "«Мон’Дэлис Русь» Общество с ограниченной ответственностью",  # noqa E501
+                    "id": 24,
+                    "name": "ГК ПИК Публичное акционерное общество",
                     "building": {
-                        "id": 11,
-                        "address": "Нижний Новгород, Хорошевская, д. 74",
-                        "location": [37.205475, 3.463513],
+                        "id": 1,
+                        "address": "Дудинка, Черкасский М., д. 39",
+                        "location": {
+                            "longitude": -9.263891,
+                            "latitude": -150.676573,
+                        },
                     },
-                    "phones": [
-                        {"phone": "+7 (453) 901-05-32"},
-                        {"phone": "+7 (737) 328-54-24"},
-                        {"phone": "+7 (489) 318-09-95"},
-                    ],
-                    "activity": [{"name": "Легковые"}, {"name": "Запчасти"}],
+                    "phones": [{"phone": "+7 (716) 065-56-96"}],
+                    "activity": [{"name": "Грузовые"}],
                 },
                 {
-                    "id": 6,
-                    "name": "Трата-та 25",
+                    "id": 27,
+                    "name": "«Водоканал Санкт-Петербурга» Публичное акционерное общество",  # noqa E501
                     "building": {
-                        "id": 11,
-                        "address": "Нижний Новгород, Хорошевская, д. 74",
-                        "location": [37.205475, 3.463513],
+                        "id": 1,
+                        "address": "Дудинка, Черкасский М., д. 39",
+                        "location": {
+                            "longitude": -9.263891,
+                            "latitude": -150.676573,
+                        },
                     },
-                    "phones": [],
-                    "activity": [],
+                    "phones": [
+                        {"phone": "+7 (913) 229-53-87"},
+                        {"phone": "+7 (546) 681-68-78"},
+                        {"phone": "+7 (336) 392-43-24"},
+                    ],
+                    "activity": [
+                        {"name": "Колбасы"},
+                        {"name": "Экспресс"},
+                        {"name": "Фуры"},
+                    ],
+                },  # noqa E501
+                {
+                    "id": 29,
+                    "name": "Евросиб Акционерное общество",
+                    "building": {
+                        "id": 1,
+                        "address": "Дудинка, Черкасский М., д. 39",
+                        "location": {
+                            "longitude": -9.263891,
+                            "latitude": -150.676573,
+                        },
+                    },
+                    "phones": [
+                        {"phone": "+7 (158) 064-37-24"},
+                        {"phone": "+7 (322) 482-65-45"},
+                        {"phone": "+7 (531) 441-12-73"},
+                    ],
+                    "activity": [{"name": "Еда"}],
+                },
+                {
+                    "id": 32,
+                    "name": "«Тактическое ракетное вооружение» Акционерное общество",  # noqa E501
+                    "building": {
+                        "id": 1,
+                        "address": "Дудинка, Черкасский М., д. 39",
+                        "location": {
+                            "longitude": -9.263891,
+                            "latitude": -150.676573,
+                        },
+                    },
+                    "phones": [
+                        {"phone": "+7 (839) 123-64-04"},
+                        {"phone": "+7 (841) 136-25-68"},
+                    ],
+                    "activity": [{"name": "Конфеты"}],
+                },
+                {
+                    "id": 37,
+                    "name": "Акционерный банк «Россия» Публичное акционерное общество",  # noqa E501
+                    "building": {
+                        "id": 1,
+                        "address": "Дудинка, Черкасский М., д. 39",
+                        "location": {
+                            "longitude": -9.263891,
+                            "latitude": -150.676573,
+                        },
+                    },
+                    "phones": [{"phone": "+7 (876) 592-35-45"}],
+                    "activity": [{"name": "Еда"}],
                 },
             ]
         },
