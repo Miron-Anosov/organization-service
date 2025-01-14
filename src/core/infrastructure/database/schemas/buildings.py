@@ -16,8 +16,8 @@ class Building(BaseModel):
         Integer, primary_key=True, autoincrement=True
     )
     address: Mapped[str] = mapped_column(nullable=False, index=True)
-    location: Mapped[str] = mapped_column(
-        Geometry("POINT", srid=4326), nullable=False
+    location: Mapped[Geometry] = mapped_column(
+        Geometry("POINT", srid=4326), nullable=False, index=True
     )
 
     organizations = relationship(
