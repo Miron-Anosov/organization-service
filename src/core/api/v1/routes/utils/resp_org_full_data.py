@@ -5,6 +5,7 @@ from typing import Any
 from src.core.api.v1.presentation.responses.organization import (
     ActivityResponse,
     BuildingResponse,
+    Location,
     OrganizationResponse,
     PhoneNumberResponse,
 )
@@ -26,7 +27,14 @@ def resp_org_full_data(
         building=BuildingResponse(
             id=organization.building.id,
             address=organization.building.address,
-            location=extract_coordinates(organization.building.location),
+            location=Location(
+                latitude=extract_coordinates(organization.building.location)[
+                    0
+                ],
+                longitude=extract_coordinates(organization.building.location)[
+                    1
+                ],
+            ),
         ),
         phones=[
             PhoneNumberResponse(phone=phone.number)
