@@ -3,10 +3,13 @@
 import logging
 from typing import Annotated
 
-from fastapi import Path
+from fastapi import Depends
 from starlette import status
 from starlette.responses import JSONResponse
 
+from src.core.api.v1.presentation.requests.organization import (
+    OrganizationByIDRequest,
+)
 from src.core.api.v1.routes.utils.resp_error import error_404_not_found
 from src.core.api.v1.routes.utils.resp_org_full_data import resp_org_full_data
 from src.core.configs.env import settings
@@ -16,23 +19,22 @@ LOGGER = logging.getLogger(settings.webconf.LOG_OUT_COMMON)
 
 
 async def org_by_id(
-    id_org: Annotated[
-        int,
-        Path(..., description="The ID of the target organization", alias="id"),
-    ]
+    organization: Annotated[
+        OrganizationByIDRequest, Depends(OrganizationByIDRequest)
+    ],
 ) -> JSONResponse:
     """
     Вывод информации об организации по её идентификатору.
 
-    :param id_org: The ID of the target organization
-    :type id_org: int
+    :param organization: The ID of the target organization
+    :type organization: OrganizationByIDRequest
     :return: JSONResponse
     """
     async with db as session:
-        org = await db.org.get_by_id(id_obj=id_org, session=session)
+        org = await db.org.get_by_id(id_obj=organization.id, session=session)
 
     if org is None:
-        LOGGER.info("organization not found. ID: %s", id_org)
+        LOGGER.info("organization not found. ID: %s", organization.id)
         raise error_404_not_found()
 
     LOGGER.info("Organization found. ID: %s, Name: %s", org.id, org.name)
