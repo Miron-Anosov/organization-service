@@ -7,6 +7,7 @@ import pytest
 import pytest_asyncio
 from factory_schemas import (
     CHILD_ACTIVITIES,
+    GRANDCHILD_ACTIVITIES,
     ROOT_ACTIVITIES,
     ActivityFakeFactory,
     BuildingsFakeFactory,
@@ -102,15 +103,17 @@ async def setup_buildings(async_session: AsyncSession) -> List[Building]:
 
 @pytest_asyncio.fixture(scope="session")
 async def setup_base_activities(async_session: AsyncSession) -> List[Activity]:
-    """Create base activities that will be used throughout the test session."""
+    """Создание базовых активностей трех уровней."""
     all_activities = []
 
+    # Создаем корневые активности (уровень 1)
     for root_name in ROOT_ACTIVITIES:
         root = ActivityFakeFactory.build(name=root_name)
         async_session.add(root)
         await async_session.flush()
         all_activities.append(root)
 
+        # Создаем активности второго уровня
         child_names = CHILD_ACTIVITIES[root_name]
         for child_name in child_names:
             child = ActivityFakeFactory.build(
@@ -119,6 +122,17 @@ async def setup_base_activities(async_session: AsyncSession) -> List[Activity]:
             async_session.add(child)
             await async_session.flush()
             all_activities.append(child)
+
+            # Создаем активности третьего уровня
+            if child_name in GRANDCHILD_ACTIVITIES:
+                grandchild_names = GRANDCHILD_ACTIVITIES[child_name]
+                for grandchild_name in grandchild_names:
+                    grandchild = ActivityFakeFactory.build(
+                        name=grandchild_name, parent=child, level=3
+                    )
+                    async_session.add(grandchild)
+                    await async_session.flush()
+                    all_activities.append(grandchild)
 
     await async_session.commit()
     return all_activities
@@ -130,22 +144,33 @@ async def setup_organizations(
     setup_buildings: List[Building],
     setup_base_activities: List[Activity],
 ) -> List[Organization]:
-    """Create test organizations with random buildings and activities."""
+    """Создание 50 тестовых организаций со случайными зданиями и активностями разных уровней."""
     organizations = []
 
-    for _ in range(5):
-        # Выбираем случайное здание
-        building = random.choice(setup_buildings)
+    # Группируем активности по уровням
+    level1_activities = [a for a in setup_base_activities if a.level == 1]
+    level2_activities = [a for a in setup_base_activities if a.level == 2]
+    level3_activities = [a for a in setup_base_activities if a.level == 3]
+    all_activities = level1_activities + level2_activities + level3_activities
 
-        # Создаем организацию
+    for _ in range(50):
+        building = random.choice(setup_buildings)
         org = OrganizationFakeFactory.build(building_id=building.id)
 
-        # Выбираем случайные активности
-        activities = random.sample(
-            setup_base_activities, k=random.randint(1, 3)
-        )
-        org.activities = activities
+        strategy = random.choice(["root", "mixed", "deep"])
 
+        if strategy == "root":
+            activities = random.sample(
+                level1_activities, k=random.randint(1, 2)
+            )
+        elif strategy == "deep":
+            activities = random.sample(
+                level3_activities, k=random.randint(1, 3)
+            )
+        else:
+            activities = random.sample(all_activities, k=random.randint(1, 4))
+
+        org.activities = activities
         organizations.append(org)
 
     async_session.add_all(organizations)

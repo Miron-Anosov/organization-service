@@ -53,7 +53,7 @@ async def test_organization_creation(
     organizations = result.scalars().all()
 
     assert (
-        len(organizations) == 5
+        len(organizations) == 50
     ), "test_organization_creation count organizations not equally"
 
     # Проверяем, что у каждой организации есть здание

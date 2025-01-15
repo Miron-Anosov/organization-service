@@ -49,8 +49,7 @@ class OrganizationCRUD(CRUDBase[Organization]):
                 self.model.building_id == building_id
             )
             result = await session.execute(stmt)
-            d = result.scalars().all()
-            return list(d) if d else []
+            return list(result.scalars().all())
         except SQLAlchemyError as e:
             LOGGER.error("Error retrieving organization by name: %s", str(e))
             return []

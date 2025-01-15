@@ -60,6 +60,18 @@ CHILD_ACTIVITIES = {
     "Услуги": ["Ремонт", "Доставка", "Аксессуары"],
 }
 
+GRANDCHILD_ACTIVITIES = {
+    "Мясная продукция": ["Колбасы", "Полуфабрикаты", "Деликатесы"],
+    "Молочная продукция": ["Сыры", "Творог", "Йогурты"],
+    "Кондитерские изделия": ["Торты", "Печенье", "Конфеты"],
+    "Грузовые": ["Фуры", "Самосвалы", "Тягачи"],
+    "Легковые": ["Седаны", "Внедорожники", "Спорткары"],
+    "Запчасти": ["Двигатели", "Кузовные", "Расходники"],
+    "Ремонт": ["Гарантийный", "Плановый", "Срочный"],
+    "Доставка": ["Курьерская", "Почтовая", "Экспресс"],
+    "Аксессуары": ["Чехлы", "Держатели", "Зарядки"],
+}
+
 
 class ActivityFakeFactory(factory.Factory):
     class Meta:
@@ -69,7 +81,11 @@ class ActivityFakeFactory(factory.Factory):
         lambda obj: (
             random.choice(ROOT_ACTIVITIES)
             if not obj.parent
-            else random.choice(CHILD_ACTIVITIES[obj.parent.name])
+            else (
+                random.choice(CHILD_ACTIVITIES[obj.parent.name])
+                if obj.parent.level == 1
+                else random.choice(GRANDCHILD_ACTIVITIES[obj.parent.name])
+            )
         )
     )
     parent_id = None

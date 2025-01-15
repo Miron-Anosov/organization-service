@@ -2,7 +2,8 @@
 
 import http
 import logging
-from typing import Awaitable, Callable
+from contextlib import asynccontextmanager
+from typing import AsyncIterator, Awaitable, Callable
 
 import uvicorn
 from fastapi import FastAPI, Request
@@ -12,14 +13,26 @@ from starlette.responses import Response as StarletteResponse
 from src.core.api.v1.routes.middlewars.log import logs_middleware
 from src.core.api.v1.routes.organization.route import router as org
 from src.core.configs.env import settings
+from src.core.infrastructure.database import db
 
 LOGGER = logging.getLogger(settings.webconf.LOG_OUT_COMMON)
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    """Connect and close DB."""
+    yield
+    await db.disconnect_db()
+    LOGGER.debug("DB disconnected")
 
 
 def create_app() -> FastAPI:
     """Maker FastAPI."""
     app_ = FastAPI(
         title="Organization Catalog API",
+        lifespan=lifespan,
+        root_path=settings.webconf.PREFIX_API,
+        description=settings.webconf.DESCRIPTION,
     )
     app_.add_middleware(
         middleware_class=CORSMiddleware,  # noqa
@@ -28,7 +41,7 @@ def create_app() -> FastAPI:
         allow_methods=[http.HTTPMethod.GET],
         allow_headers=["Content-Type", "X-API-Key"],
     )
-    app_.include_router(router=org)
+    app_.include_router(router=org, prefix="/v1")
 
     @app_.middleware("http")
     async def wrap_api_key_middleware(
@@ -65,3 +78,10 @@ def run_server(
         log_config=None,
     )
     LOGGER.info("uvicorn finished")
+
+
+if __name__ == "__main__":
+    from src.core.configs.logs import configure_logging
+
+    configure_logging()
+    run_server()

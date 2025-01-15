@@ -1,9 +1,10 @@
 """Configuration .env."""
 
+from os import cpu_count
 from pathlib import Path
 from typing import Literal
 
-from pydantic import AnyHttpUrl, ValidationError
+from pydantic import AnyHttpUrl, Field, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -85,9 +86,14 @@ class DataBaseClientEnvConf(EnvironmentSetting):
 LogType = Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"]
 
 
+_file_description_path = Path(__file__).parent / "description.md"
+DESC = Path(_file_description_path).read_text()
+
+
 class WebConfig(EnvironmentSetting):
     """Conf CORS from environment."""
 
+    DESCRIPTION: str = Field(default=DESC)
     ALLOWED_ORIGINS: str
     PREFIX_API: str
     STREAM_LOG_LEVEL: LogType
@@ -112,6 +118,19 @@ class WebConfig(EnvironmentSetting):
         return self.HOST_LOGS
 
 
+class GunicornENV(EnvironmentSetting):
+    """Conf Gunicorn."""
+
+    GUNICORN_WORKERS: int | None = Field(default=cpu_count())
+    GUNICORN_BUILD: str
+    GUNICORN_LOG_LEVEL: str
+    GUNICORN_WSGI_APP: str
+    GUNICORN_WORKER_CLASS: str
+    GUNICORN_TIMEOUT: int
+    GUNICORN_ACCESSLOG: str
+    GUNICORN_ERRORLOG: str
+
+
 class Settings:
     """Common configs for environments."""
 
@@ -120,6 +139,7 @@ class Settings:
         try:
             self.db = DataBaseClientEnvConf()
             self.webconf = WebConfig()
+            self.gunicorn = GunicornENV()
         except ValidationError as e:
             raise EnvironmentFileNotFoundError(e)
 

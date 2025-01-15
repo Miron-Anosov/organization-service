@@ -1,14 +1,31 @@
 """Entrypoint."""
 
 import logging
+import sys
 
-from src.core.api.app import run_server
+from fastapi import FastAPI
+
+from src.core.api.app import create_app
 from src.core.configs.logs import configure_logging
 
 configure_logging()
 
-logger = logging.getLogger("app")
+LOGGER = logging.getLogger("app")
+
+
+def run() -> FastAPI:
+    """Run RestAPI.
+
+    :return: FastAPI
+    """
+    app = create_app()
+    return app
+
 
 if __name__ == "__main__":
-    run_server()
-    logger.info("starting app")
+    try:
+        LOGGER.info("starting app")
+        run()
+    except KeyboardInterrupt:
+        LOGGER.info("finished app")
+        sys.exit(0)
