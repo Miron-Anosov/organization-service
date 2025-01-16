@@ -9,7 +9,10 @@ docker compose -f docker-compose.yaml up db -d
 ```
 4. Устанавливаем локально зависимости.
 ```shell
-poetry shell && poetry install
+poetry shell
+```
+```shell
+poetry install
 ```
 5. Генерируем тестовые данные для БД.
 ```bash
