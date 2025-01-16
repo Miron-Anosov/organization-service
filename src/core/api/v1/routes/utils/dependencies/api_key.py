@@ -5,8 +5,9 @@ from fastapi.security import APIKeyHeader
 from starlette.status import HTTP_403_FORBIDDEN
 
 from src.core.api.v1.presentation.responses.error import ErrResponse
+from src.core.configs.env import settings
 
-API_KEY = "your_api_key_here"  # TODO: вынести в .env
+API_KEY = settings.webconf.API_KEY
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 

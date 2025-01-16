@@ -4,7 +4,7 @@ from os import cpu_count
 from pathlib import Path
 from typing import Literal
 
-from pydantic import AnyHttpUrl, Field, ValidationError
+from pydantic import Field, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -93,7 +93,11 @@ DESC = Path(_file_description_path).read_text()
 class WebConfig(EnvironmentSetting):
     """Conf CORS from environment."""
 
+    API_KEY: str
     DESCRIPTION: str = Field(default=DESC)
+    CONTACT_NAME: str
+    CONTACT_URL: str
+    CONTACT_EMAIL: str
     ALLOWED_ORIGINS: str
     PREFIX_API: str
     STREAM_LOG_LEVEL: LogType
@@ -117,12 +121,20 @@ class WebConfig(EnvironmentSetting):
         """Return host logs."""
         return self.HOST_LOGS
 
+    def contact_swagger(self) -> dict[str, str]:
+        """Return contact swagger."""
+        return {
+            "name": self.CONTACT_NAME,
+            "url": self.CONTACT_URL,
+            "email": self.CONTACT_EMAIL,
+        }
+
 
 class GunicornENV(EnvironmentSetting):
     """Conf Gunicorn."""
 
     GUNICORN_WORKERS: int | None = Field(default=cpu_count())
-    GUNICORN_BUILD: str
+    GUNICORN_BIND: str
     GUNICORN_LOG_LEVEL: str
     GUNICORN_WSGI_APP: str
     GUNICORN_WORKER_CLASS: str

@@ -33,6 +33,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
         root_path=settings.webconf.PREFIX_API,
         description=settings.webconf.DESCRIPTION,
+        contact=settings.webconf.contact_swagger(),
     )
     app_.add_middleware(
         middleware_class=CORSMiddleware,  # noqa
@@ -62,7 +63,7 @@ def run_server(
     workers: int = 1,
 ) -> None:
     """Run uvicorn server."""
-    LOGGER.info("uvicorn started: http://%s:%s/", host, port)
+    LOGGER.info(f"uvicorn started: http://{host}:{port}/")
     uvicorn.run(
         app="src.core.api.app:create_app",
         host=host,
