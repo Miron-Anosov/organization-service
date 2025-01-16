@@ -19,6 +19,7 @@ asyncpg = "^0.30.0"
 uvicorn = "^0.34.0"
 greenlet = "^3.1.1"
 mypy = "^1.14.1"
+gunicorn = "^23.0.0"
 
 
 
