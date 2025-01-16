@@ -76,7 +76,7 @@ class OrganizationByLocationCRUD(CRUDWithOneSubModel[Organization, Building]):
         :return: Список объектов.
         """
         try:
-            point_wkt = f"SRID=4326;POINT({point[1]} {point[0]})"
+            point_wkt = f"SRID=4326;POINT({point[0]} {point[1]})"
             stmt = (
                 select(self.model)
                 .join(self.submodel)
