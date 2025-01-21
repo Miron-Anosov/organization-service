@@ -1,15 +1,18 @@
 x-env-postgres: &postgres-environment
-    POSTGRES_USER: ${POSTGRES_USER}
-    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    POSTGRES_DB: ${POSTGRES_DB}
-    POSTGRES_MAX_CONNECTIONS: 200
-    POSTGRES_HOST: ${POSTGRES_HOST}
-    POSTGRES_PORT: ${POSTGRES_PORT}
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  POSTGRES_DB: ${POSTGRES_DB}
+  POSTGRES_MAX_CONNECTIONS: 200
+  POSTGRES_HOST: ${POSTGRES_HOST}
+  POSTGRES_PORT: ${POSTGRES_PORT}
 
 x-env-db: &postgres
   environment:
     <<: *postgres-environment
 
+x-env-jaeger-img: &jaeger-img
+  environment:
+    COLLECTOR_OTLP_ENABLED: ${COLLECTOR_OTLP_ENABLED}
 
 
 x-env-backend-api: &backend-api-environment
@@ -48,6 +51,21 @@ x-env-backend-api: &backend-api-environment
     GUNICORN_LOG_LEVEL: ${GUNICORN_LOG_LEVEL}
     GUNICORN_ACCESSLOG: ${GUNICORN_ACCESSLOG}
     GUNICORN_ERRORLOG: ${GUNICORN_ERRORLOG}
+
+
+    #Jaeger
+    AGENT_HOSTNAME: ${AGENT_HOSTNAME}
+    SERVICE_NAME_API: ${SERVICE_NAME_API}
+    SERVICE_NAME_DB: ${SERVICE_NAME_DB}
+    ENABLE_COMMENTER: ${ENABLE_COMMENTER}
+    AGENT_PORT: ${AGENT_PORT}
+    SERVICE_NAMESPACE_APP: ${SERVICE_NAMESPACE_APP}
+    TRACE_TAGS_TEAM: ${TRACE_TAGS_TEAM}
+    TRACE_TAGS_VERSION: ${TRACE_TAGS_VERSION}
+    TRACE_TAGS_REGION: ${TRACE_TAGS_REGION}
+    MAX_QUEUE_SIZE: ${MAX_QUEUE_SIZE}
+    MAX_EXPORT_BATCH_SIZE: ${MAX_EXPORT_BATCH_SIZE}
+    SCHEDULE_DELAY_MILLIS: ${SCHEDULE_DELAY_MILLIS}
 
 
 networks:
@@ -111,7 +129,7 @@ services:
 
   api_backend:
     <<: [
-      *backend-api-environment, *service-defaults
+      *backend-api-environment, *service-defaults,
     ]
     container_name: ${CONTAINER_NAME_API}
     image: ${IMAGE_API}:${VERSION_IMAGE}
@@ -129,6 +147,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  jaeger:
+    <<: [
+      *service-defaults, *jaeger-img
+    ]
+    image: jaegertracing/all-in-one:1.47
+    container_name: ${CONTAINER_NAME_JAEGER}
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
 
 
 volumes:

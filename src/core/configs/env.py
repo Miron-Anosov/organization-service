@@ -2,7 +2,7 @@
 
 from os import cpu_count
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import Field, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -85,7 +85,6 @@ class DataBaseClientEnvConf(EnvironmentSetting):
 
 LogType = Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"]
 
-
 _file_description_path = Path(__file__).parent / "description.md"
 DESC = Path(_file_description_path).read_text()
 
@@ -143,6 +142,51 @@ class GunicornENV(EnvironmentSetting):
     GUNICORN_ERRORLOG: str
 
 
+class JaegerENV(EnvironmentSetting):
+    """Conf Jaeger."""
+
+    AGENT_HOSTNAME: str
+    SERVICE_NAME_API: str
+    SERVICE_NAME_DB: str
+    ENABLE_COMMENTER: bool = Field(default=False)
+    AGENT_PORT: int
+    SERVICE_NAMESPACE_APP: str
+    TRACE_TAGS_TEAM: str | None = Field(default=None)
+    TRACE_TAGS_VERSION: str | None = Field(default=None)
+    TRACE_TAGS_REGION: str | None = Field(default=None)
+    MAX_QUEUE_SIZE: int
+    MAX_EXPORT_BATCH_SIZE: int
+    SCHEDULE_DELAY_MILLIS: int
+
+    @property
+    def tags(self) -> dict[str, Any]:
+        """Get tags."""
+        return {
+            "team": self.TRACE_TAGS_TEAM,
+            "version": self.TRACE_TAGS_VERSION,
+            "region": self.TRACE_TAGS_REGION,
+        }
+
+    @property
+    def debug_mode(self) -> bool:
+        """Check mode."""
+        if self.MODE == "prod":
+            return False
+        return True
+
+    @property
+    def sampling_rate(self) -> float:
+        """Set sample rate."""
+        if self.MODE == "prod":
+            return 0.1
+        elif self.MODE == "test":
+            return 1.0
+        elif self.MODE == "dev":
+            return 0.5
+        else:
+            return 0
+
+
 class Settings:
     """Common configs for environments."""
 
@@ -152,6 +196,7 @@ class Settings:
             self.db = DataBaseClientEnvConf()
             self.webconf = WebConfig()
             self.gunicorn = GunicornENV()
+            self.trace = JaegerENV()
         except ValidationError as e:
             raise EnvironmentFileNotFoundError(e)
 

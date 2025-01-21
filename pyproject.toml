@@ -20,6 +20,12 @@ uvicorn = "^0.34.0"
 greenlet = "^3.1.1"
 mypy = "^1.14.1"
 gunicorn = "^23.0.0"
+opentelemetry-api = "^1.29.0"
+opentelemetry-sdk = "^1.29.0"
+opentelemetry-instrumentation-fastapi = "^0.50b0"
+opentelemetry-exporter-jaeger = "^1.21.0"
+opentelemetry-instrumentation-sqlalchemy = "^0.50b0"
+opentelemetry-instrumentation-asyncpg = "^0.50b0"
 
 
 
@@ -54,6 +60,7 @@ warn_required_dynamic_aliases = true
 plugins = ['pydantic.mypy', "sqlalchemy.ext.mypy.plugin"]
 python_version = 3.12
 module_paths =  ["src"]
+namespace_packages = true
 warn_unused_ignores = true
 warn_redundant_casts = true
 disallow_any_generics = true

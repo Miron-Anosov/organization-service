@@ -2,6 +2,7 @@
 
 import logging
 
+from opentelemetry import trace
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,6 +16,7 @@ from src.core.infrastructure.database.schemas.activity import Activity
 from src.core.infrastructure.database.schemas.organizations import Organization
 
 LOGGER = logging.getLogger(settings.webconf.LOG_OUT_COMMON)
+TRACER = trace.get_tracer(__name__)
 
 
 class ActivityCRUD(CRUDWithOneSubModel[Activity, Organization]):
@@ -33,27 +35,38 @@ class ActivityCRUD(CRUDWithOneSubModel[Activity, Organization]):
         :param with_children: Return children activities.
         :return: Organization by activity type.
         """
-        try:
+        with TRACER.start_as_current_span("get_activity") as span:
+            span.set_attribute("activity.name", activity_name)
+            try:
 
-            stmt = select(self.model).where(self.model.name == activity_name)
-
-            if with_children:
-                stmt = stmt.options(
-                    selectinload(self.model.organizations).selectinload(
-                        self.submodel.activities
-                    ),
-                    selectinload(self.model.children)
-                    .selectinload(self.model.organizations)
-                    .selectinload(self.submodel.activities),
-                    selectinload(self.model.children)
-                    .selectinload(self.model.children)
-                    .selectinload(self.model.organizations)
-                    .selectinload(self.submodel.activities),
+                stmt = select(self.model).where(
+                    self.model.name == activity_name
                 )
 
-            result = await session.execute(stmt)
-            activity = result.scalar_one_or_none()
-            return activity if activity else None
-        except SQLAlchemyError as e:
-            LOGGER.error("Error retrieving activity by name: %s", str(e))
-            return None
+                if with_children:
+                    stmt = stmt.options(
+                        selectinload(self.model.organizations).selectinload(
+                            self.submodel.activities
+                        ),
+                        selectinload(self.model.children)
+                        .selectinload(self.model.organizations)
+                        .selectinload(self.submodel.activities),
+                        selectinload(self.model.children)
+                        .selectinload(self.model.children)
+                        .selectinload(self.model.organizations)
+                        .selectinload(self.submodel.activities),
+                    )
+
+                result = await session.execute(stmt)
+                activity = result.scalar_one_or_none()
+                span.set_attribute(
+                    "db.result", "success" if activity else "not_found"
+                )
+                return activity if activity else None
+            except SQLAlchemyError as e:
+                span.record_exception(e)
+                span.set_status(
+                    trace.status.Status(trace.status.StatusCode.ERROR)
+                )
+                LOGGER.error("Error retrieving activity by name: %s", str(e))
+                return None

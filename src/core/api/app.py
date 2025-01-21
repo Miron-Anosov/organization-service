@@ -14,6 +14,8 @@ from src.core.api.v1.routes.middlewars.log import logs_middleware
 from src.core.api.v1.routes.organization.route import router as org
 from src.core.configs.env import settings
 from src.core.infrastructure.database import db
+from src.core.infrastructure.tracer.trace_app import setup_jaeger
+from src.core.infrastructure.tracer.trace_db import setup_jaeger_of_database
 
 LOGGER = logging.getLogger(settings.webconf.LOG_OUT_COMMON)
 
@@ -21,6 +23,7 @@ LOGGER = logging.getLogger(settings.webconf.LOG_OUT_COMMON)
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     """Connect and close DB."""
+    await setup_jaeger_of_database()
     yield
     await db.disconnect_db()
     LOGGER.debug("DB disconnected")
@@ -35,6 +38,9 @@ def create_app() -> FastAPI:
         description=settings.webconf.DESCRIPTION,
         contact=settings.webconf.contact_swagger(),
     )
+
+    setup_jaeger(app=app_)
+
     app_.add_middleware(
         middleware_class=CORSMiddleware,  # noqa
         allow_origins=settings.webconf.allowed_origins(),
