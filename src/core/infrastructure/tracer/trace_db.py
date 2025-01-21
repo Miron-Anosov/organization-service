@@ -43,7 +43,7 @@ async def setup_jaeger_of_database(
         client: ClientDatabase = await db.init_engine()
         engine = client.create_async_engine()
         sync_engine = engine.sync_engine
-        LOGGER.info("Engine initialized: %s", engine)
+        LOGGER.info("Engine initialized: %s", str(engine))
         SQLAlchemyInstrumentor().instrument(
             engine=sync_engine,
             service=service_name,
