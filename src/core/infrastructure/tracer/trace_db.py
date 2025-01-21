@@ -3,6 +3,8 @@
 import logging
 from typing import Optional
 
+from opentelemetry import trace
+from opentelemetry.instrumentation.asyncpg import AsyncPGInstrumentor
 from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
 from opentelemetry.trace import TracerProvider
 from sqlalchemy.exc import SQLAlchemyError
@@ -54,6 +56,14 @@ async def setup_jaeger_of_database(
                 "db_framework": db_framework,
                 "traceparent": traceparent,
             },
+        )
+
+        AsyncPGInstrumentor().instrument(
+            tracer_provider=(
+                tracer_provider
+                if tracer_provider
+                else trace.get_tracer_provider()
+            )
         )
         LOGGER.debug("Trace of database setup complete")
     except SQLAlchemyError as e:
